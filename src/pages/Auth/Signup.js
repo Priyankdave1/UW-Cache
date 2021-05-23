@@ -10,12 +10,10 @@ export default function Signup() {
   const phoneRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
-  const nonprofitNumberRef = useRef();
-  const orgNameRef = useRef();
+  const nameRef = useRef();
   const addressRef = useRef();
   const cityRef = useRef();
   const postalCodeRef = useRef();
-  const contNameRef = useRef();
   const { signup } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,31 +33,30 @@ export default function Signup() {
       setError("");
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value);
-    } catch {
-      setError("Error Signing Up");
+      await db
+        .collection("users")
+        .doc(emailRef.current.value)
+        .set({
+          name: nameRef.current.value,
+          email: emailRef.current.value,
+          address: addressRef.current.value,
+          city: cityRef.current.value,
+          postalCode: postalCodeRef.current.value,
+          phone: phoneRef.current.value,
+        })
+        .then((docRef) => {
+          console.log("Document written with ID: ");
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+          setError(error);
+        });
+      history.push("/");
+    } catch (err) {
+      console.log(err);
+      setError("Error Signing Up: " + err);
     }
 
-    await db
-      .collection("users")
-      .doc(emailRef.current.value)
-      .set({
-        orgName: orgNameRef.current.value,
-        email: emailRef.current.value,
-        number: nonprofitNumberRef.current.value,
-        address: addressRef.current.value,
-        city: cityRef.current.value,
-        postalCode: postalCodeRef.current.value,
-        contName: contNameRef.current.value,
-        phone: phoneRef.current.value,
-      })
-      .then((docRef) => {
-        console.log("Document written with ID: ");
-      })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
-        setError(error);
-      });
-    history.push("/");
     setLoading(false);
   }
 
@@ -78,12 +75,16 @@ export default function Signup() {
             {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
               <Form.Group id="orgName">
-                <Form.Label>Organization Name</Form.Label>
-                <Form.Control type="name" ref={orgNameRef} required />
+                <Form.Label>Full Name</Form.Label>
+                <Form.Control type="name" ref={nameRef} required />
               </Form.Group>
-              <Form.Group id="nonprofitNumber">
-                <Form.Label>Charitable Organization Number</Form.Label>
-                <Form.Control ref={nonprofitNumberRef} required />
+              <Form.Group id="email">
+                <Form.Label>Email</Form.Label>
+                <Form.Control type="email" ref={emailRef} required />
+              </Form.Group>
+              <Form.Group id="phone">
+                <Form.Label>Phone Number (optional)</Form.Label>
+                <Form.Control type="phone" ref={phoneRef} />
               </Form.Group>
               <Form.Group id="address">
                 <Form.Label>Street Address</Form.Label>
@@ -103,24 +104,7 @@ export default function Signup() {
                   </Form.Group>
                 </Col>
               </Form.Row>
-              <Form.Group id="email">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type="email" ref={emailRef} required />
-              </Form.Group>
-              <Form.Row>
-                <Col>
-                  <Form.Group id="contName">
-                    <Form.Label>Contact Name</Form.Label>
-                    <Form.Control ref={contNameRef} required />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group id="phone">
-                    <Form.Label>Phone Number</Form.Label>
-                    <Form.Control type="phone" ref={phoneRef} required />
-                  </Form.Group>
-                </Col>
-              </Form.Row>
+
               <Form.Group id="password">
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" ref={passwordRef} required />

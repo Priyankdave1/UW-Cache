@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import loadable from "@loadable/component";
 import Card from "react-bootstrap/Card";
+import CardColumns from "react-bootstrap/CardColumns";
 import { Container, Col, OverlayTrigger } from "react-bootstrap";
 import { db } from "../../firebase";
 import { Link } from "react-router-dom";
@@ -16,7 +17,7 @@ const AllAssets = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const querySnapshot = await db.collectionGroup("assets").get();
+        const querySnapshot = await db.collectionGroup("listings").get();
 
         setAssetList(querySnapshot.docs.map((doc) => doc.data()));
         setLoading(false);
@@ -42,27 +43,44 @@ const AllAssets = () => {
     assetLocation,
     assetDescription,
     owner,
+    picture,
+    startDate,
+    endDate,
   }) => {
     return (
-      <Col>
-        <Link to={`/asset/${assetName} ,${owner}`}>
-          <Card
-            style={{ margin: "20px", cursor: "pointer" }}
-            className="h-100 banana"
-          >
-            <Card.Body>
-              <Card.Title>{assetName}</Card.Title>
-              <Card.Text style={{ fontSize: "1rem" }} maxLength="12">
-                <strong>Estimated Value: ${assetValue}</strong> <br />
-                {assetDescription.substring(0, 300)} . . .
-              </Card.Text>
-            </Card.Body>
-            <Card.Footer>
-              <small className="text-muted">{owner}</small>
-            </Card.Footer>
-          </Card>
-        </Link>
-      </Col>
+      <Link to={`/asset/${assetName} ,${owner}`}>
+        <Card
+          style={{ margin: "5px", cursor: "pointer", marginBottom: "20px" }}
+        >
+          {picture ? (
+            <Card.Img
+              variant="top"
+              src={picture}
+              style={{ height: "15rem", width: "100%" }}
+            />
+          ) : (
+            <Card.Img
+              variant="top"
+              src="/img/storage.jpg"
+              style={{ height: "15rem", width: "100%" }}
+            />
+          )}
+
+          <Card.Body style={{ height: "10rem" }}>
+            <Card.Title>{assetName}</Card.Title>
+            <Card.Text style={{ fontSize: "1rem" }} maxLength="12">
+              <strong>Approx Size: </strong>
+              {assetValue} m<sup>3</sup> <br />
+              {assetDescription.substring(0, 500)}
+            </Card.Text>
+          </Card.Body>
+          <Card.Footer>
+            <small className="text-muted">
+              {startDate} - {endDate}
+            </small>
+          </Card.Footer>
+        </Card>
+      </Link>
     );
   };
 
@@ -78,38 +96,46 @@ const AllAssets = () => {
           value={values.asset || ""}
           onChange={handleChange}
         />
-        {values.asset
-          ? assetList
-              .filter((doc) =>
-                doc.name
-                  .toLowerCase()
-                  .trim()
-                  .includes(values.asset.toLowerCase().trim())
-              )
-              .map(function (doc) {
+        <CardColumns>
+          {values.asset
+            ? assetList
+                .filter((doc) =>
+                  doc.name
+                    .toLowerCase()
+                    .trim()
+                    .includes(values.asset.toLowerCase().trim())
+                )
+                .map(function (doc) {
+                  return (
+                    <AssetCard
+                      assetName={doc.location}
+                      assetValue={doc.value}
+                      assetLocation={doc.location}
+                      assetDescription={doc.description}
+                      owner={doc.owner}
+                      key={doc.name}
+                      picture={doc.picture}
+                      startDate={doc.startDate}
+                      endDate={doc.endDate}
+                    />
+                  );
+                })
+            : assetList.map(function (doc) {
                 return (
                   <AssetCard
-                    assetName={doc.name}
-                    assetValue={doc.value}
+                    assetName={doc.location}
+                    assetValue={doc.size}
                     assetLocation={doc.location}
                     assetDescription={doc.description}
                     owner={doc.owner}
                     key={doc.name}
+                    picture={doc.picture}
+                    startDate={doc.startDate}
+                    endDate={doc.endDate}
                   />
                 );
-              })
-          : assetList.map(function (doc) {
-              return (
-                <AssetCard
-                  assetName={doc.name}
-                  assetValue={doc.value}
-                  assetLocation={doc.location}
-                  assetDescription={doc.description}
-                  owner={doc.owner}
-                  key={doc.name}
-                />
-              );
-            })}
+              })}
+        </CardColumns>
       </Container>
     );
   }
