@@ -43,17 +43,13 @@ const useForm = (
       data.append("file", values.picture);
       data.append("upload_preset", "UW-cache");
       data.append("cloud_name", "chocolatecloud");
-      fetch("  https://api.cloudinary.com/v1_1/chocolatecloud/image/upload", {
-        method: "post",
-        body: data,
-      })
-        .then((resp) => resp.json())
-        .then((data) => {
-          setUrl(data.url);
-          console.log(data.url);
-        })
-        .catch((err) => console.log(err));
-      return url;
+      return fetch(
+        "https://api.cloudinary.com/v1_1/chocolatecloud/image/upload",
+        {
+          method: "post",
+          body: data,
+        }
+      );
     }
   };
 
@@ -87,10 +83,11 @@ const useForm = (
           }
           name = doc.data().name;
         })
-        .then(uploadImage)
-        .then(() => {
+        .then(() => uploadImage())
+        .then((resp) => resp.json())
+        .then((data) => {
           console.log("pushing to database");
-          console.log("the url is: " + url);
+          console.log("the url is: " + data.url);
           user.collection("listings").doc(values.location).set({
             size: values.size,
             location: location,
@@ -98,7 +95,7 @@ const useForm = (
             endDate: values.endDate,
             description: values.description,
             owner: name,
-            picture: url,
+            picture: data.url,
           });
           if (edit) {
             user.collection("assets").doc(location).delete();
