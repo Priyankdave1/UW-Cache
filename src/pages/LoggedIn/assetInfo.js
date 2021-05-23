@@ -119,8 +119,6 @@ const AssetInfo = () => {
             size={asset.size}
             phone={owner.phone}
             email={owner.email}
-            button={deleteListing}
-            button2={editListing}
             startDate={asset.startDate}
             endDate={asset.endDate}
             picture={asset.picture}

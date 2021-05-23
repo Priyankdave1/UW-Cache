@@ -119,8 +119,11 @@ const AllAssets = () => {
           }}
         >
           <Col>
-            <Dropdown style={{ backgroundColor: "gray" }}>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
+            <Dropdown>
+              <Dropdown.Toggle
+                style={{ backgroundColour: "gray" }}
+                id="dropdown-basic"
+              >
                 {searchingFor}
               </Dropdown.Toggle>
               <Dropdown.Menu>
