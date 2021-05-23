@@ -19,27 +19,33 @@ const Contact = ({
   id,
   t,
   edit,
-  asset,
-  value,
+  size,
   location,
   description,
+  startDate,
+  endDate,
 }) => {
-  const [defaultAsset, setDefaultAsset] = useState(asset);
-  const [defaultValue, setDefaultValue] = useState(value);
+  const [defaultSize, setDefaultSize] = useState(size);
   const [defaultLocation, setDefaultLocation] = useState(location);
   const [defaultDescription, setDefaultDescription] = useState(description);
+  const [defaultStartDate, setDefaultStartDate] = useState(startDate);
+  const [defaultEndDate, setDefaultEndDate] = useState(endDate);
+  const [picture, setPicture] = useState("");
 
   const { values, errors, handleChange, handleSubmit } = useForm(
     validate,
     edit,
-    asset,
-    setDefaultAsset,
-    value,
-    setDefaultValue,
+    size,
+    setDefaultSize,
     location,
     setDefaultLocation,
     description,
-    setDefaultDescription
+    setDefaultDescription,
+    startDate,
+    setDefaultStartDate,
+    endDate,
+    setDefaultEndDate,
+    picture
   );
 
   const ValidationType = ({ type }) => {
@@ -72,38 +78,60 @@ const Contact = ({
               <Col span={24}>
                 <Input
                   type="text"
-                  name="asset"
-                  id="Asset"
-                  placeholder="Asset Available"
-                  text={values.asset || defaultAsset}
+                  name="location"
+                  id="Location"
+                  placeholder="Location (if different from your current address)"
+                  text={values.location || defaultLocation}
                   onChange={handleChange}
                 />
-                <ValidationType type="asset" />
+                <ValidationType type="listing" />
               </Col>
+              <Row>
+                <Col span={12}>
+                  <Input
+                    type="date"
+                    name="startDate"
+                    id="Start"
+                    placeholder="Starting date"
+                    text={values.startDate || defaultStartDate}
+                    onChange={handleChange}
+                  />
+                  <ValidationType type="value" />
+                </Col>
+                <Col span={12}>
+                  <Input
+                    type="date"
+                    name="endDate"
+                    id="End"
+                    placeholder="Ending date"
+                    text={values.endDate || defaultEndDate}
+                    onChange={handleChange}
+                  />
+                </Col>
+              </Row>
               <Col span={24}>
                 <Input
                   type="number"
-                  name="value"
-                  id="Value"
-                  placeholder="Estimated Asset Value"
-                  text={values.value || defaultValue}
+                  name="size"
+                  id="Size"
+                  placeholder="Approx. Storage Size (meters cubed)"
+                  text={values.size || defaultSize}
                   onChange={handleChange}
                 />
                 <ValidationType type="value" />
               </Col>
               <Col span={24}>
                 <Input
-                  type="text"
-                  name="location"
-                  id="Location"
-                  placeholder="Asset Location (if different than organization's address)"
-                  text={values.location || defaultLocation}
+                  type="file"
+                  name="picture"
+                  id="Picture"
+                  placeholder="Image of Storage Space"
                   onChange={handleChange}
                 />
               </Col>
               <Col span={24}>
                 <TextArea
-                  placeholder="Detailed Description of Asset (size, capacity, any special requirements for item, additional items required for use)"
+                  placeholder="Detailed Description of listing (size, capacity, any special requirements for item, additional items required for use)"
                   name="description"
                   id="Description"
                   onChange={handleChange}
@@ -113,7 +141,7 @@ const Contact = ({
               </Col>
               <S.ButtonContainer>
                 <Button name="submit" type="submit">
-                  {edit ? t("Update Asset") : t("List Asset")}
+                  {edit ? t("Update listing") : t("Submit Listing")}
                 </Button>
               </S.ButtonContainer>
             </S.FormGroup>

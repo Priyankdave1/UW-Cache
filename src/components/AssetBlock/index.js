@@ -16,10 +16,12 @@ const AssetBlock = ({
   t,
   id,
   owner,
-  value,
-  location,
+  size,
   phone,
   email,
+  picture,
+  startDate,
+  endDate,
 }) => {
   const scrollTo = (id) => {
     const element = document.getElementById(id);
@@ -33,14 +35,30 @@ const AssetBlock = ({
         <Fade bottom>
           <S.ContentWrapper>
             <Col lg={24} md={24} sm={24} xs={24}>
-              <p>{owner}</p>
+              <p>
+                Available from <strong>{startDate}</strong> until{" "}
+                <strong>{endDate}</strong>
+              </p>
               <h6>{t(title)}</h6>
+              <img
+                src={picture}
+                style={{
+                  display: "block",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  width: "100%",
+                }}
+              ></img>
               <S.Content>
                 {content} <br />
                 <br />
                 <br />
-                <strong>Estimated Asset Value:</strong> ${value} <br />
-                <strong>Location:</strong> {location}
+                <strong></strong>
+                <br />
+                <strong>Approx Size Available:</strong> {size}m<sup>3</sup>{" "}
+                <br />
+                <br />
+                <strong>Owner:</strong> {owner}
                 <br />
                 <strong>Email:</strong> <a href={"mailto:" + email}>{email}</a>
                 <br />
@@ -48,17 +66,21 @@ const AssetBlock = ({
                 <br />
                 <br />
                 <br />
-                <p>Please contact the owner if you wish to use this asset.</p>
+                <p>
+                  Please contact the owner if you wish to use this space.
+                  Remember, if you are using storage space, you are also
+                  expected to give it in the next term.
+                </p>
               </S.Content>
               {button ? (
                 <>
-                  <Button
+                  {/* <Button
                     style={{ margin: "5px" }}
                     name="edit"
                     onClick={button2}
                   >
                     Edit Listing
-                  </Button>
+                  </Button> */}
 
                   <Button
                     style={{ margin: "5px" }}

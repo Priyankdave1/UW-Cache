@@ -1,13 +1,13 @@
 export default function validate(values) {
   let errors = {};
-  if (!values.asset) {
-    errors.asset = "Asset is required";
+  if (!values.startDate || !values.endDate) {
+    errors.listing = "Date is required";
   }
-  if (!values.value) {
-    errors.value = "Asset Value is required";
+  if (!values.size) {
+    errors.size = "Listing Size is required";
   }
   if (!values.description) {
-    errors.description = "Asset Description is required";
+    errors.description = "Listing Description is required";
   }
   return errors;
 }
