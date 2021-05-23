@@ -85,7 +85,7 @@ const Header = ({ t }) => {
             <S.CustomNavLinkSmall style={{ width: "180px" }}>
               <S.Span>
                 <Link to="/login">
-                  <Button>{t("Open SASS")}</Button>
+                  <Button>{t("Open Cache")}</Button>
                 </Link>
               </S.Span>
             </S.CustomNavLinkSmall>
