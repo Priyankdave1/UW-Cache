@@ -100,7 +100,7 @@ const AllAssets = () => {
           {values.asset
             ? assetList
                 .filter((doc) =>
-                  doc.name
+                  doc.location
                     .toLowerCase()
                     .trim()
                     .includes(values.asset.toLowerCase().trim())
