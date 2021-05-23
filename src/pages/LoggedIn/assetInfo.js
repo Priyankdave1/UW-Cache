@@ -24,23 +24,28 @@ const AssetInfo = () => {
     const fetchData = async () => {
       try {
         const assetName = match.params.assetName;
-
+        console.log(match.params.assetName);
+        console.log(match.params.owner);
         await db
           .collection("users")
           .where("name", "==", match.params.owner)
           .get()
           .then((querySnapshot) => {
             if (!querySnapshot.empty) {
+              console.log("not empty");
               setOwner(querySnapshot.docs[0].data());
+              console.log(owner);
               querySnapshot.docs[0].ref
                 .collection("listings")
                 .doc(assetName.trim())
                 .get()
                 .then((doc) => {
                   setAsset(doc.data());
-
+                  console.log(asset);
                   setLoading(false);
                 });
+            } else {
+              console.log("empty!!");
             }
           });
       } catch (err) {
@@ -108,13 +113,15 @@ const AssetInfo = () => {
       return (
         <Container style={{ minHeight: "80vh" }}>
           <AssetBlock
-            title={asset.name}
+            title={asset.location}
             content={asset.description}
             owner={match.params.owner.trim()}
-            value={asset.value}
-            location={asset.location}
+            size={asset.size}
             phone={owner.phone}
             email={owner.email}
+            startDate={asset.startDate}
+            endDate={asset.endDate}
+            picture={asset.picture}
             id="info"
           />
         </Container>
