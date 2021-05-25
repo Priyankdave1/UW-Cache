@@ -49,12 +49,12 @@ const Header = ({ t }) => {
             </S.CustomNavLinkSmall>
             <S.CustomNavLinkSmall>
               <S.Span>
-                <Link to="/myassets">{t("My Assets")}</Link>
+                <Link to="/myassets">{t("My Listings")}</Link>
               </S.Span>
             </S.CustomNavLinkSmall>
             <S.CustomNavLinkSmall>
               <S.Span>
-                <Link to="/">{t("All Assets")}</Link>
+                <Link to="/">{t("All Listings")}</Link>
               </S.Span>
             </S.CustomNavLinkSmall>
 
@@ -66,7 +66,7 @@ const Header = ({ t }) => {
             <S.CustomNavLinkSmall style={{ width: "180px" }}>
               <S.Span>
                 <Link to="/addAsset">
-                  <Button>{t("Add Asset")}</Button>
+                  <Button>{t("Add Listing")}</Button>
                 </Link>
               </S.Span>
             </S.CustomNavLinkSmall>
@@ -85,7 +85,7 @@ const Header = ({ t }) => {
             <S.CustomNavLinkSmall style={{ width: "180px" }}>
               <S.Span>
                 <Link to="/login">
-                  <Button>{t("Open SASS")}</Button>
+                  <Button>{t("Open Cache")}</Button>
                 </Link>
               </S.Span>
             </S.CustomNavLinkSmall>

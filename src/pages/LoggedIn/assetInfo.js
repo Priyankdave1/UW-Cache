@@ -24,23 +24,28 @@ const AssetInfo = () => {
     const fetchData = async () => {
       try {
         const assetName = match.params.assetName;
-
+        console.log(match.params.assetName);
+        console.log(match.params.owner);
         await db
           .collection("users")
-          .where("orgName", "==", match.params.owner)
+          .where("name", "==", match.params.owner)
           .get()
           .then((querySnapshot) => {
             if (!querySnapshot.empty) {
+              console.log("not empty");
               setOwner(querySnapshot.docs[0].data());
+              console.log(owner);
               querySnapshot.docs[0].ref
-                .collection("assets")
+                .collection("listings")
                 .doc(assetName.trim())
                 .get()
                 .then((doc) => {
                   setAsset(doc.data());
-
+                  console.log(asset);
                   setLoading(false);
                 });
+            } else {
+              console.log("empty!!");
             }
           });
       } catch (err) {
@@ -60,7 +65,7 @@ const AssetInfo = () => {
       await db
         .collection("users")
         .doc(currentUser.email)
-        .collection("assets")
+        .collection("listings")
         .doc(match.params.assetName.trim())
         .delete();
     } catch (err) {
@@ -68,32 +73,6 @@ const AssetInfo = () => {
     }
     history.push("/");
     console.log("deleted");
-  };
-
-  const book = () => {
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.REACT_APP_USER || "abc@gmail.com", // TODO: your gmail account
-        pass: process.env.REACT_APP_PASSWORD || "1234", // TODO: your gmail password
-      },
-    });
-
-    // Step 2
-    let mailOptions = {
-      from: "sunecompany@gmail.com", // TODO: email sender
-      to: "krish.life21@gmail.com", // TODO: email receiver
-      subject: "Nodemailer - Test",
-      text: "Wooohooo it works!!",
-    };
-
-    // Step 3
-    transporter.sendMail(mailOptions, (err, data) => {
-      if (err) {
-        return console.log("Error occurs");
-      }
-      return console.log("Email sent!!!");
-    });
   };
 
   if (loading) {
@@ -104,15 +83,17 @@ const AssetInfo = () => {
         return (
           <Container style={{ minHeight: "80vh" }}>
             <AssetBlock
-              title={asset.name}
+              title={asset.location}
               content={asset.description}
               owner={match.params.owner.trim()}
-              value={asset.value}
-              location={asset.location}
+              size={asset.size}
               phone={owner.phone}
               email={owner.email}
               button={deleteListing}
               button2={editListing}
+              startDate={asset.startDate}
+              endDate={asset.endDate}
+              picture={asset.picture}
               id="info"
             />
           </Container>
@@ -132,13 +113,15 @@ const AssetInfo = () => {
       return (
         <Container style={{ minHeight: "80vh" }}>
           <AssetBlock
-            title={asset.name}
+            title={asset.location}
             content={asset.description}
             owner={match.params.owner.trim()}
-            value={asset.value}
-            location={asset.location}
+            size={asset.size}
             phone={owner.phone}
             email={owner.email}
+            startDate={asset.startDate}
+            endDate={asset.endDate}
+            picture={asset.picture}
             id="info"
           />
         </Container>

@@ -9,23 +9,49 @@ const useForm = (
   edit,
   asset,
   setDefaultAsset,
-  value,
-  setDefaultValue,
+  size,
+  setDefaultSize,
   location,
   setDefaultLocation,
   description,
-  setDefaultDescription
+  setDefaultDescription,
+  startDate,
+  setDefaultStartDate,
+  endDate,
+  setDefaultEndDate,
+  picture
 ) => {
   const [values, setValues] = useState({
-    asset: asset,
-    value: value,
+    size: size,
+    startDate: startDate,
+    endDate: endDate,
     location: location,
     description: description,
+    picture: picture,
   });
+
   const [errors, setErrors] = useState({});
   const [shouldSubmit, setShouldSubmit] = useState(false);
   const { currentUser } = useAuth();
   const user = db.collection("users").doc(currentUser.email);
+
+  const [url, setUrl] = useState("");
+
+  const uploadImage = () => {
+    if (values.picture) {
+      const data = new FormData();
+      data.append("file", values.picture);
+      data.append("upload_preset", "UW-cache");
+      data.append("cloud_name", "chocolatecloud");
+      return fetch(
+        "https://api.cloudinary.com/v1_1/chocolatecloud/image/upload",
+        {
+          method: "post",
+          body: data,
+        }
+      );
+    }
+  };
 
   const openNotificationWithIcon = (type) => {
     notification[type]({
@@ -38,8 +64,15 @@ const useForm = (
     event.preventDefault();
     setErrors(validate(values));
     var location = "";
-    var orgName = "";
-    if (values.asset && values.value && values.description) {
+    var name = "";
+    // upload picture to cloudinary
+
+    if (
+      values.endDate &&
+      values.startDate &&
+      values.size &&
+      values.description
+    ) {
       user
         .get()
         .then((doc) => {
@@ -48,18 +81,24 @@ const useForm = (
           } else {
             location = doc.data().address;
           }
-          orgName = doc.data().orgName;
+          name = doc.data().name;
         })
-        .then(() => {
-          user.collection("assets").doc(values.asset).set({
-            name: values.asset,
-            value: values.value,
+        .then(() => uploadImage())
+        .then((resp) => resp.json())
+        .then((data) => {
+          console.log("pushing to database");
+          console.log("the url is: " + data.url);
+          user.collection("listings").doc(values.location).set({
+            size: values.size,
             location: location,
+            startDate: values.startDate,
+            endDate: values.endDate,
             description: values.description,
-            owner: orgName,
+            owner: name,
+            picture: data.url,
           });
           if (edit) {
-            user.collection("assets").doc(asset).delete();
+            user.collection("assets").doc(location).delete();
           }
         })
         .then(() => {
@@ -81,11 +120,19 @@ const useForm = (
     setDefaultAsset("");
     setDefaultDescription("");
     setDefaultLocation("");
-    setDefaultValue("");
+    setDefaultSize("");
     setValues((values) => ({
       ...values,
       [event.target.name]: event.target.value,
     }));
+    console.log("target: " + [event.target.name]);
+    if (event.target.name === "picture") {
+      console.log("this is a picture");
+      setValues((values) => ({
+        ...values,
+        [event.target.name]: event.target.files[0],
+      }));
+    }
     setErrors((errors) => ({ ...errors, [event.target.name]: "" }));
   };
 
